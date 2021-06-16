@@ -46,19 +46,31 @@ class TrainYard
 
   def overflow_cars
     collection_arr = Array.new
-    filtered = total_inventory.select do |car, quantity|
-      quantity > 10
-    end
-    @trains.each_with_index do |train, index|
-      if train.cargo.keys[index].type == filtered[type]
-        collection_arr << train
+    filtered = total_inventory.select { |car, quantity| quantity > 10 }.keys.to_a
+    filtered.each do |car|
+      @trains.each do |train|
+        train.cargo.keys.each do |train_car|
+          collection_arr << car if car == train_car
+        end
       end
     end
-    collection_arr.uniq
+    filtered = collection_arr.each_with_object(Hash.new(0)) { |car, hash| hash[car] += 1 }
+    filtered.select { |car, quantity| quantity > 1 }.keys
   end
 
   def unload(car, quantity)
-    # stuff
+    if total_inventory[car] >= quantity
+      until quantity <= 0
+      @trains.each do |train|
+        delta = quantity - train.cargo[car]
+        delta <= 0 ? train.remove_cars(car, quantity) : train.remove_cars(car, quantity - delta)
+        quantity = delta
+      end
+    end
+      true
+    else
+      false
+    end
   end
 
 end

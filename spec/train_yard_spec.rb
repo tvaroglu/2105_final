@@ -124,7 +124,7 @@ RSpec.describe TrainYard do
     expect(expected.first).to eq(car1)
   end
 
-  xit 'can unload cargo' do
+it 'can unload cargo' do
     train_yard = TrainYard.new({location: 'Brighton'})
 
     car1 = Car.new({type: 'Mail', weight: 5})
